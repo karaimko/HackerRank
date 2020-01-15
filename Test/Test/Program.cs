@@ -18,69 +18,60 @@ namespace Test
 
     class Solution {
 
-        // Complete the missingNumbers function below.
-        static int[] missingNumbers(int[] arr, int[] brr) {
-            var list = new List<int>();
-            Array.Sort(arr);
-            Array.Sort(brr);
-            if(arr.Length == 0)
+        // Complete the maximumSum function below.
+        static long maximumSum(long[] a, long m) {
+            long w = m-1;
+            int n = a.Length;
+            long[,] arr = new long[w+1,n+1];
+
+            for(int i = 0;i < n; i++)
             {
-                return brr.Distinct().ToArray();
+                a[i] = a[i] % m;
             }
-            int n = brr.Length;
-            int cnt1 = 1;
-            int cnt2 = 1;
-            for(int i=0,j=0;j<n;i++,j++)
+
+            for(int i = 0;i < w+1;i++)
             {
-                if(arr[i] != brr[j] || cnt1 != cnt2)
+                arr[i,0] = 0;
+            }
+            for(int j = 0;j < n+1;j++)
+            {
+                arr[0,j] = 0;
+            }
+            for(int i = 1; i<n+1; i++)
+            {
+                for(int j = 0; j < w+1; j++)
                 {
-                    if (i > 0)
+                    arr[j,i] = arr[j,i-1];
+                    if(a[i-1] <= j)
                     {
-                        if (arr[i] == arr[i - 1])
-                        {
-                            cnt1++;
-                        }
-                        else
-                        {
-                            cnt1 = 1;
-                        }
+                        arr[j,i] = Math.Max(arr[j,i] % m, (arr[j-a[i-1], i-1] + a[i-1]) % m);
                     }
-
-                    if (j > 0)
-                    {
-                        if (brr[j] == brr[j - 1])
-                        {
-                            cnt2++;
-                        }
-                        else
-                        {
-                            cnt2 = 1;
-                        }
-                    }
-
-                    list.Add(brr[j]);
-                    i--;
                 }
             }
 
-            var a = list.Distinct().ToArray();
-            Array.Sort(a);
-            return a;
+            return arr[w,n];
+
         }
 
-        static void Main(string[] args)
-        {
-            int n = 100000;//Convert.ToInt32(Console.ReadLine());
+        static void Main(string[] args) {
 
-            int[] arr = Array.ConvertAll(File.ReadAllText("file1.txt").Split(' '), arrTemp => Convert.ToInt32(arrTemp))
-                ;
-            int m = 100018;//Convert.ToInt32(Console.ReadLine());
+            int q = Convert.ToInt32(Console.ReadLine());
 
-            int[] brr = Array.ConvertAll(File.ReadAllText("file2.txt").Split(' '), brrTemp => Convert.ToInt32(brrTemp))
-                ;
-            int[] result = missingNumbers(arr, brr);
+            for (int qItr = 0; qItr < q; qItr++) {
+                string[] nm = Console.ReadLine().Split(' ');
 
-            Console.WriteLine(string.Join(" ", result));
+                int n = Convert.ToInt32(nm[0]);
+
+                long m = Convert.ToInt64(nm[1]);
+
+                long[] a = Array.ConvertAll(Console.ReadLine().Split(' '), aTemp => Convert.ToInt64(aTemp))
+                    ;
+                long result = maximumSum(a, m);
+
+                Console.WriteLine(result);
+            }
+            
         }
     }
+
 }
